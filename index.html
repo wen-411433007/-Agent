@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>量子穿隧效應（Quantum Tunneling）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --paper: #FAF7F2;
+      --paper-deep: #F1ECE1;
+      --paper-card: #FFFFFF;
+      --ink: #1E242B;
+      --ink-muted: #555E68;
+      --indigo: #2B4C7E;
+      --indigo-soft: rgba(43, 76, 126, 0.08);
+      --amber: #C85A32;
+      --amber-soft: rgba(200, 90, 50, 0.10);
+      --rule: #DFD7C8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    body {
+      background: #D6D1C7;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      padding: 28px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .a4-page {
+      width: 210mm;
+      height: 297mm;
+      background-color: var(--paper);
+      background-image: radial-gradient(#DED7C8 0.85px, transparent 0.85px);
+      background-size: 14px 14px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 22px 55px rgba(25, 28, 34, 0.22);
+    }
+
+    /* 頂部滿版色條與書卷標題區 */
+    .hero {
+      padding: 18px 28px 14px;
+      border-bottom: 2px solid var(--indigo);
+      background: linear-gradient(180deg, rgba(241, 236, 225, 0.72) 0%, rgba(250, 247, 242, 0.3) 100%);
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      font-family: "Noto Serif TC", "PMingLiU", serif;
+      font-size: 25px;
+      font-weight: 900;
+      color: var(--indigo);
+      letter-spacing: 0.03em;
+      line-height: 1.2;
+    }
+
+    .en-sub {
+      font-family: "Noto Serif TC", Georgia, serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .hook {
+      margin-top: 7px;
+      font-size: 12.2px;
+      color: var(--ink);
+      padding-left: 10px;
+      border-left: 3px solid var(--amber);
+      line-height: 1.45;
+    }
+
+    /* 主體內容 */
+    .main-content {
+      padding: 12px 28px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      flex: 1;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .section-num {
+      font-family: "Noto Serif TC", serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--paper);
+      background: var(--indigo);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: "Noto Serif TC", serif;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--indigo);
+      border-bottom: 1px solid var(--rule);
+      flex: 1;
+      padding-bottom: 2px;
+    }
+
+    /* 1. 古典 vs 量子 */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .compare-card {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 8px 11px;
+      font-size: 11.2px;
+      line-height: 1.5;
+    }
+
+    .compare-card.quantum {
+      border-left: 3.5px solid var(--indigo);
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .compare-card.classical {
+      border-left: 3.5px solid #9AA3AD;
+    }
+
+    .tag-label {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      letter-spacing: 0.03em;
+    }
+
+    .classical .tag-label { color: #646D77; }
+    .quantum .tag-label { color: var(--indigo); }
+
+    /* 2. 薛丁格方程與圖表 */
+    .eq-banner {
+      background: var(--paper-card);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--indigo);
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-radius: 3px;
+    }
+
+    .eq-banner-text {
+      font-size: 10.8px;
+      color: var(--ink-muted);
+      line-height: 1.45;
+      max-width: 175px;
+      flex-shrink: 0;
+    }
+
+    .eq-banner-text strong {
+      color: var(--indigo);
+      display: block;
+      font-size: 11.3px;
+      margin-bottom: 2px;
+    }
+
+    .eq-banner-math {
+      font-size: 11px;
+      text-align: center;
+      flex: 1;
+      padding-left: 6px;
+    }
+
+    .diagram-box {
+      background: var(--paper-card);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 8px 12px 6px;
+      margin-top: 7px;
+    }
+
+    .diagram-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      color: var(--ink-muted);
+      margin-bottom: 4px;
+    }
+
+    .diagram-caption strong {
+      color: var(--indigo);
+      font-size: 11px;
+    }
+
+    .regions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 9px;
+      margin-top: 7px;
+    }
+
+    .region-card {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--rule);
+      border-top: 2.5px solid var(--indigo);
+      border-radius: 3px;
+      padding: 7px 9px;
+      font-size: 10.6px;
+      line-height: 1.45;
+    }
+
+    .region-card.barrier {
+      border-top-color: var(--amber);
+      background: #FFFDF9;
+    }
+
+    .region-card h4 {
+      font-size: 11.2px;
+      color: var(--indigo);
+      margin-bottom: 3px;
+    }
+
+    .region-card.barrier h4 {
+      color: var(--amber);
+    }
+
+    .mini-math {
+      margin: 4px 0;
+      padding: 3px 4px;
+      background: var(--indigo-soft);
+      border-radius: 2px;
+      text-align: center;
+      font-size: 10.4px;
+    }
+
+    .region-card.barrier .mini-math {
+      background: var(--amber-soft);
+    }
+
+    /* 3. 穿透係數與三大直覺 */
+    .prob-layout {
+      display: grid;
+      grid-template-columns: 1.18fr 1fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .formula-panel {
+      background: var(--paper-card);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--amber);
+      border-radius: 3px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 5px;
+    }
+
+    .formula-row-label {
+      font-size: 10.3px;
+      font-weight: 700;
+      color: var(--ink-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .formula-main {
+      text-align: center;
+      font-size: 11.4px;
+      padding: 2px 0;
+    }
+
+    .formula-approx {
+      background: var(--amber-soft);
+      border-radius: 3px;
+      padding: 5px 6px;
+      text-align: center;
+      font-size: 11.2px;
+    }
+
+    .factors-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .factor-item {
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      padding: 6px 9px;
+      font-size: 10.6px;
+      line-height: 1.4;
+    }
+
+    .factor-item strong {
+      color: var(--indigo);
+    }
+
+    /* 底部滿版補充區域 */
+    .supp-band {
+      background: var(--paper-deep);
+      border-top: 2px solid var(--indigo);
+      padding: 11px 28px 14px;
+    }
+
+    .supp-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .supp-badge {
+      font-size: 10.2px;
+      font-weight: 700;
+      color: var(--paper);
+      background: var(--amber);
+      padding: 1px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    .supp-title {
+      font-family: "Noto Serif TC", serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--indigo);
+    }
+
+    .supp-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.28fr;
+      gap: 14px;
+      font-size: 10.6px;
+      line-height: 1.48;
+    }
+
+    .supp-col h5 {
+      font-size: 11.2px;
+      color: var(--ink);
+      margin-bottom: 4px;
+      border-bottom: 1px dashed #C7BFA9;
+      padding-bottom: 2px;
+    }
+
+    .supp-col ul {
+      padding-left: 14px;
+    }
+
+    .supp-col li {
+      margin-bottom: 3px;
+    }
+
+    .katex { font-size: 1.02em; }
+
+    @media print {
+      body { background: none; padding: 0; }
+      .a4-page { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="a4-page">
+    <header class="hero">
+      <div class="hero-top">
+        <h1>量子穿隧效應</h1>
+        <span class="en-sub">Quantum Tunneling · 1D Potential Barrier</span>
+      </div>
+      <p class="hook">一顆能量比高牆還低的粒子，為什麼有時能直接「穿牆而出」？關鍵在於微觀粒子以波函數滲透古典禁區。</p>
+    </header>
+
+    <div class="main-content">
+      <!-- Section 1 -->
+      <section>
+        <div class="section-head">
+          <span class="section-num">1</span>
+          <h2 class="section-title">核心反直覺：古典禁區裡的波動奇蹟</h2>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card classical">
+            <span class="tag-label">古典力學視角（必敗無疑）</span>
+            <p>總能量 $E &lt; V_0$ 時，位壘內動能 $K = E - V_0 &lt; 0$ 在物理上不存在；球到達邊界必定 <strong>100% 反彈</strong>，穿透機率 $T = 0$。</p>
+          </div>
+          <div class="compare-card quantum">
+            <span class="tag-label">量子力學視角（波函數滲透）</span>
+            <p>微觀粒子不以「點」撞牆，而以<strong>波函數 $\psi(x)$</strong> 分布於空間；只要位壘夠薄，消逝波就能穿透並於另一側重現。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section>
+        <div class="section-head">
+          <span class="section-num">2</span>
+          <h2 class="section-title">一維方形位壘模型與曲率直覺</h2>
+        </div>
+
+        <div class="eq-banner">
+          <div class="eq-banner-text">
+            <strong>定態薛丁格方程式（曲率形式）</strong>
+            觀察 $\psi''$ 與 $\psi$ 的正負號關係，即可一眼判斷波形會「震盪」或「衰減」。
+          </div>
+          <div class="eq-banner-math">
+            $$-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} + V(x)\psi = E\psi \;\Longrightarrow\; \frac{d^2\psi}{dx^2} = \frac{2m}{\hbar^2}\bigl(V(x) - E\bigr)\psi(x)$$
+          </div>
+        </div>
+
+        <div class="diagram-box">
+          <div class="diagram-caption">
+            <strong>數學模擬示意圖：波函數 $\text{Re}[\psi(x)]$ 穿過寬度 $a$、高度 $V_0 &gt; E$ 之方形位壘</strong>
+            <span>藍色實線：波函數波形 ｜ 橘色虛線：粒子總能量 $E$</span>
+          </div>
+          <svg id="tunneling-svg" viewBox="0 0 720 164" width="100%" height="150" aria-label="量子穿隧波函數示意圖"></svg>
+        </div>
+
+        <div class="regions-grid">
+          <div class="region-card">
+            <h4>區域 I / III：位壘外側（$V = 0$）</h4>
+            <p>因 $V - E &lt; 0$，$\psi''$ 與 $\psi$ <strong>異號</strong>，波形彎向中心軸形成自由震盪行進波（$k = \frac{\sqrt{2mE}}{\hbar}$）。</p>
+            <div class="mini-math">$\psi_{\text{I}} = A e^{ikx} + B e^{-ikx},\;\; \psi_{\text{III}} = F e^{ikx}$</div>
+          </div>
+          <div class="region-card barrier">
+            <h4>區域 II：位壘內部（$V = V_0 &gt; E$）</h4>
+            <p>因 $V_0 - E &gt; 0$，$\psi''$ 與 $\psi$ <strong>同號</strong>，不再震盪而改為<strong>指數衰減</strong>（特徵穿透深度 $\delta = 1/\kappa$）。</p>
+            <div class="mini-math">$\psi_{\text{II}} = C e^{-\kappa x} + D e^{\kappa x},\;\; \kappa = \frac{\sqrt{2m(V_0 - E)}}{\hbar}$</div>
+          </div>
+          <div class="region-card">
+            <h4>為何穿得過去？邊界連續性</h4>
+            <p>在 $x=0$ 與 $x=a$ 處，<strong>$\psi$ 與 $\frac{d\psi}{dx}$ 皆須平滑連續</strong>。只要寬度 $a$ 有限，指數衰減在 $x=a$ 尚未歸零，右側即可銜接出非零行進波。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section>
+        <div class="section-head">
+          <span class="section-num">3</span>
+          <h2 class="section-title">穿隧機率（穿透係數 $T$）與三大關鍵直覺</h2>
+        </div>
+
+        <div class="prob-layout">
+          <div class="formula-panel">
+            <div class="formula-row-label">精確穿透係數 $T = |F/A|^2$</div>
+            <div class="formula-main">
+              $$T = \left[ 1 + \frac{V_0^2}{4E(V_0 - E)} \sinh^2(\kappa a) \right]^{-1}$$
+            </div>
+            <div class="formula-row-label">厚／高位壘經典近似（$\kappa a \gg 1$，$\sinh\kappa a \approx \frac{1}{2}e^{\kappa a}$）</div>
+            <div class="formula-approx">
+              $$T \approx \frac{16E(V_0 - E)}{V_0^2}\, e^{-2\kappa a} \propto \exp\!\left(-\frac{2a}{\hbar}\sqrt{2m(V_0 - E)}\right)$$
+            </div>
+          </div>
+
+          <div class="factors-panel">
+            <div class="factor-item">
+              <strong>1. 位壘寬度 $a$（影響最劇烈）：</strong>$a$ 位於負指數次方內，牆稍微變厚，穿隧機率便呈<strong>指數級雪崩下降</strong>。
+            </div>
+            <div class="factor-item">
+              <strong>2. 能量缺口 $(V_0 - E)$：</strong>位壘越高出粒子能量，衰減常數 $\kappa$ 越大，波函數在牆內縮減越快。
+            </div>
+            <div class="factor-item">
+              <strong>3. 粒子質量 $m$：</strong>電子極輕容易穿隧；宏觀物體因 $m$ 極大使 $e^{-2\kappa a} \to 0$，日常無法穿牆。
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Supplementary Footer Band -->
+    <footer class="supp-band">
+      <div class="supp-header">
+        <span class="supp-badge">補充區域</span>
+        <h3 class="supp-title">常見物理迷思與真實世界應用</h3>
+      </div>
+      <div class="supp-grid">
+        <div class="supp-col">
+          <h5>迷思釐清：粒子穿牆後「能量變少」了嗎？</h5>
+          <p><strong>沒有！</strong> 區域 III 的位能仍為 $V=0$，波數 $k = \frac{\sqrt{2mE}}{\hbar}$ 與左側完全相同，表示<strong>波長與粒子能量 $E$ 毫髮無傷</strong>。衰減的是波函數<strong>振幅</strong>（$|F| &lt; |A|$），代表在右側找到粒子的<strong>機率</strong>變小；一旦穿出，能量依然完整。</p>
+        </div>
+        <div class="supp-col">
+          <h5>沒有穿隧就沒有宇宙與奈米科技</h5>
+          <ul>
+            <li><strong>太陽核融合</strong>：核心溫度約 $1.5 \times 10^7\text{ K}$ 仍不足以讓質子翻越庫侖斥力牆，全靠穿隧維持發光。</li>
+            <li><strong>掃描穿隧顯微鏡（STM）</strong>：穿隧電流 $I \propto e^{-2\kappa d}$ 對間距 $d$ 極度敏感，得以「看見」單顆原子。</li>
+            <li><strong>$\alpha$ 衰變</strong>：核內 $\alpha$ 粒子靠穿隧逃出位壘，解釋了放射性半衰期橫跨 $10^{-7}\text{ s}$ 至 $10^{10}$ 年的奧秘。</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+
+      const svg = document.getElementById("tunneling-svg");
+      const NS = "http://www.w3.org/2000/svg";
+      const add = (tag, attrs, text) => {
+        const el = document.createElementNS(NS, tag);
+        for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+        if (text !== undefined) el.textContent = text;
+        svg.appendChild(el);
+        return el;
+      };
+
+      const xMin = -2.5, xMax = 3.4;
+      const a = 0.90, k = 3.6, kappa = 1.65, phi = 0.95;
+      const sx = x => 36 + ((x - xMin) / (xMax - xMin)) * 656;
+      const baseE = 96, v0Top = 26, floorY = 140;
+
+      // Exact C1 wavefunction Re[e^{i*phi} * psi(x)]
+      const ch = Math.cosh(kappa * a), sh = Math.sinh(kappa * a);
+      const Ar = ch, Ai = 0.5 * (kappa / k - k / kappa) * sh;
+      const Br = 0, Bi = -0.5 * (kappa / k + k / kappa) * sh;
+      const cPhi = Math.cos(phi), sPhi = Math.sin(phi);
+
+      function psiReal(x) {
+        let re, im;
+        if (x < 0) {
+          const ck = Math.cos(k * x), sk = Math.sin(k * x);
+          const ar = Ar * ck - Ai * sk, ai = Ar * sk + Ai * ck;
+          const br = Br * ck + Bi * sk, bi = -Br * sk + Bi * ck;
+          re = ar + br; im = ai + bi;
+        } else if (x <= a) {
+          re = Math.cosh(kappa * (a - x));
+          im = -(k / kappa) * Math.sinh(kappa * (a - x));
+        } else {
+          re = Math.cos(k * (x - a));
+          im = Math.sin(k * (x - a));
+        }
+        return re * cPhi - im * sPhi;
+      }
+
+      const N = 360;
+      const samples = [];
+      let maxAbs = 0;
+      for (let i = 0; i <= N; i++) {
+        const x = xMin + (i / N) * (xMax - xMin);
+        const val = psiReal(x);
+        if (Math.abs(val) > maxAbs) maxAbs = Math.abs(val);
+        samples.push({ x, val });
+      }
+      const ampScale = 36 / (maxAbs || 1);
+
+      const x0 = sx(0), xA = sx(a), xLeft = sx(xMin), xRight = sx(xMax);
+
+      // Defs for diagonal hatch inside barrier
+      const defs = add("defs", {});
+      const pat = document.createElementNS(NS, "pattern");
+      pat.setAttribute("id", "ivoryHatch");
+      pat.setAttribute("width", "8");
+      pat.setAttribute("height", "8");
+      pat.setAttribute("patternUnits", "userSpaceOnUse");
+      pat.setAttribute("patternTransform", "rotate(45)");
+      const patLine = document.createElementNS(NS, "line");
+      patLine.setAttribute("x1", "0"); patLine.setAttribute("y1", "0");
+      patLine.setAttribute("x2", "0"); patLine.setAttribute("y2", "8");
+      patLine.setAttribute("stroke", "#C85A32");
+      patLine.setAttribute("stroke-opacity", "0.18");
+      patLine.setAttribute("stroke-width", "1.5");
+      pat.appendChild(patLine);
+      defs.appendChild(pat);
+
+      // Region tints
+      add("rect", { x: x0, y: v0Top, width: xA - x0, height: 142 - v0Top, fill: "rgba(200, 90, 50, 0.08)" });
+      add("rect", { x: x0, y: v0Top, width: xA - x0, height: 142 - v0Top, fill: "url(#ivoryHatch)" });
+
+      // Barrier outline
+      add("polyline", {
+        points: `${xLeft},142 ${x0},142 ${x0},${v0Top} ${xA},${v0Top} ${xA},142 ${xRight},142`,
+        fill: "none", stroke: "#555E68", "stroke-width": "1.5"
+      });
+
+      // Energy level E dashed line
+      add("line", {
+        x1: xLeft, y1: baseE, x2: xRight, y2: baseE,
+        stroke: "#C85A32", "stroke-width": "1.2", "stroke-dasharray": "5 4"
+      });
+
+      // Wave curve
+      let d = "";
+      samples.forEach((pt, i) => {
+        const y = baseE - ampScale * pt.val;
+        d += (i === 0 ? "M" : "L") + sx(pt.x).toFixed(2) + "," + y.toFixed(2) + " ";
+      });
+      add("path", { d, fill: "none", stroke: "#2B4C7E", "stroke-width": "2.3", "stroke-linejoin": "round" });
+
+      // Labels
+      add("text", { x: (xLeft + x0) / 2, y: 18, "text-anchor": "middle", fill: "#2B4C7E", "font-size": "11", "font-weight": "700" }, "區域 I (入射 + 反射)");
+      add("text", { x: (x0 + xA) / 2, y: 18, "text-anchor": "middle", fill: "#C85A32", "font-size": "11", "font-weight": "700" }, "區域 II (指數衰減)");
+      add("text", { x: (xA + xRight) / 2, y: 18, "text-anchor": "middle", fill: "#2B4C7E", "font-size": "11", "font-weight": "700" }, "區域 III (同波長透射波)");
+
+      add("text", { x: x0 - 6, y: v0Top + 12, "text-anchor": "end", fill: "#555E68", "font-size": "10.5", "font-weight": "700" }, "V₀");
+      add("text", { x: xLeft - 6, y: baseE + 4, "text-anchor": "end", fill: "#C85A32", "font-size": "10.5", "font-weight": "700" }, "E");
+
+      // x=0, x=a ticks & width a
+      add("text", { x: x0, y: 155, "text-anchor": "middle", fill: "#555E68", "font-size": "10" }, "x = 0");
+      add("text", { x: xA, y: 155, "text-anchor": "middle", fill: "#555E68", "font-size": "10" }, "x = a");
+      add("line", { x1: x0, y1: 150, x2: xA, y2: 150, stroke: "#C85A32", "stroke-width": "1.1" });
+      add("text", { x: (x0 + xA) / 2, y: 161, "text-anchor": "middle", fill: "#C85A32", "font-size": "10", "font-weight": "700" }, "位壘寬度 a");
+    });
+  </script>
+</body>
+</html>
